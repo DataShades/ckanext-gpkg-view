@@ -1,0 +1,47 @@
+[project]
+name = "ckanext-gpkg-view"
+version = "0.0.1"
+description = "Preview for gpkg files"
+readme = "README.md"
+authors = [
+    {name = "DataShades"}
+]
+license = {text = "AGPL"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+
+keywords = [ "CKAN", ]
+dependencies = [
+    "geopandas>=1.0.1,<2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/DataShades/ckanext-gpkg-view"
+
+[project.entry-points."ckan.plugins"]
+gpkg_view = "ckanext.gpkg_view.plugin:GpkgViewPlugin"
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.isort]
+known_ckan = "ckan"
+known_ckanext = "ckanext"
+known_self = "ckanext.gpkg_view"
+sections = "FUTURE,STDLIB,FIRSTPARTY,THIRDPARTY,CKAN,CKANEXT,SELF,LOCALFOLDER"
+profile = "black"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+        "ignore::sqlalchemy.exc.SADeprecationWarning",
+        "ignore::sqlalchemy.exc.SAWarning",
+        "ignore::DeprecationWarning",
+]
+addopts = "--ckan-ini test.ini"

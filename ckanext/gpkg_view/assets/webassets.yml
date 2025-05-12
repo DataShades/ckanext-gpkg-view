@@ -1,0 +1,19 @@
+js:
+  filter: rjsmin
+  output: ckanext-gpkg_view/%(version)s-gpkg_view.js
+  extra:
+    preload:
+      - base/main
+  contents:
+    - js/vendor/leaflet/leaflet.js
+    - js/vendor/leaflet-providers.js
+    - js/vendor/proj4/proj4.js
+    - js/vendor/proj4leaflet/proj4leaflet.js
+    - js/common_map.js
+    - js/gpkg-view.js
+
+css:
+  output: ckanext-gpkg_view/%(version)s-gpkg_view.css
+  contents:
+    - css/gpkg-view.css
+    - js/vendor/leaflet/leaflet.css

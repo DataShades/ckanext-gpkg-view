@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block page %}
+    {% set map_config = h.gpkg_get_common_map_config() %}
+    <div data-module="gpkg-view" id="data-preview"
+            data-module-site_url="{{ h.dump_json(h.url_for('/', locale='default', qualified=true)) }}"
+            data-module-map_config="{{ h.dump_json(map_config) }}"
+            data-module-max_file_size="{{ h.gpkg_get_max_file_size() }}"
+            >
+        <h4 class="loading-dialog">
+            <div class="loading-spinner"></div>
+            <div class="left">{{ _('Loading...') }}</div>
+        </h4>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <script>
+    var preload_resource = {{ h.literal(h.dump_json(resource)) }};
+  </script>
+
+  {% asset 'gpkg_view/js' %}
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+
+  {% asset 'gpkg_view/css' %}
+{% endblock %}

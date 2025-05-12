@@ -1,0 +1,21 @@
+version: 1
+groups:
+  - annotation: ckanext-gpkg-view
+    options:
+      - key: ckanext.gpkg_view.max_file_size
+        description: Maximum file size for GPKG files
+        default: 25600000 # 25MB
+        type: int
+        editable: true
+
+      - key: ckanext.gpkg_view.cache_duration
+        description: Cache duration for GPKG files
+        default: 1800 # 30 minutes
+        type: int
+        editable: true
+
+      - key: ckanext.gpkg_view.cache_enabled
+        description: Enable caching for GPKG files
+        default: true
+        type: bool
+        editable: true

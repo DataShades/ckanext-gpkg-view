@@ -9,6 +9,7 @@ import ckan.plugins.toolkit as tk
 from ckan import model
 
 from ckanext.gpkg_view.cache import CacheManager
+from ckanext.gpkg_view.config import get_cache_enabled, get_simplify_tolerance
 
 log = logging.getLogger(__name__)
 
@@ -16,6 +17,17 @@ geopkg_preview = Blueprint("geopkg_preview", __name__)
 
 
 def geopkg_fetch_geojson(package_id: str, resource_id: str) -> str:
+    """
+    Fetch GeoJSON from a GeoPackage file.
+
+    Args:
+        package_id: The ID of the dataset
+        resource_id: The ID of the resource
+
+    Returns:
+        GeoJSON as a string
+    """
+
     tk.check_access(
         "resource_show", {"user": tk.current_user.name}, {"id": resource_id}
     )
@@ -25,9 +37,9 @@ def geopkg_fetch_geojson(package_id: str, resource_id: str) -> str:
     if not resource:
         return "{}"
 
-    cache_manager = CacheManager(resource_id)
+    cache_enabled = get_cache_enabled()
 
-    if data := cache_manager.get_data():
+    if cache_enabled and (data := CacheManager.get_data(resource_id)):
         log.info("Returning cached geojson for resource %s", resource_id)
         return data
 
@@ -41,23 +53,27 @@ def geopkg_fetch_geojson(package_id: str, resource_id: str) -> str:
 
     data = extract_geojson_from_gpkg(file_path)
 
-    cache_manager.set_data(data)
+    if cache_enabled:
+        CacheManager.set_data(resource_id, data)
 
     return data
 
 
-def extract_geojson_from_gpkg(file_path: str) -> str:
+def extract_geojson_from_gpkg(path: str) -> str:
     """
     Extracts GeoJSON from a GeoPackage file.
 
     Args:
-        file_path: The path to the GeoPackage file.
+        path: The path or URL to the GeoPackage file.
 
     Returns:
-        GeoJSON as a dictionary
+        GeoJSON as a string
     """
 
-    gdf: gpd.GeoDataFrame = gpd.read_file(file_path)
+    gdf: gpd.GeoDataFrame = gpd.read_file(path)
+
+    if simplify_tolerance := get_simplify_tolerance():
+        gdf["geometry"] = gdf["geometry"].simplify(simplify_tolerance)  # type: ignore
 
     gdf = normalize_geodataframe_for_json(gdf)
 

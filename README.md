@@ -45,7 +45,7 @@ groups:
 
       - key: ckanext.gpkg_view.cache_duration
         description: Cache duration for GPKG files
-        default: 1800 # 30 minutes
+        default: 21600 # 6 hours
         type: int
         editable: true
 
@@ -53,6 +53,14 @@ groups:
         description: Enable caching for GPKG files
         default: true
         type: bool
+        editable: true
+
+      - key: ckanext.gpkg_view.simplify_tolerance
+        description: |
+          The simplification tolerance in the units of the coordinate reference
+          system (CRS). Higher = more simplification. 0 = no simplification.
+        default: 0
+        type: int
         editable: true
 ```
 

@@ -11,31 +11,31 @@ log = logging.getLogger(__name__)
 
 
 class CacheManager:
-    def __init__(self, resource_id: str):
-        self.resource_id = resource_id
-
-    def set_data(self, data: str):
-        folder_path = self.get_file_cache_path()
-        file_path = os.path.join(folder_path, f"{self.resource_id}.json")
+    @staticmethod
+    def set_data(resource_id: str, data: str):
+        folder_path = CacheManager.get_file_cache_path()
+        file_path = os.path.join(folder_path, f"{resource_id}.json")
 
         with open(file_path, "w") as f:
             f.write(data)
 
-    def get_data(self) -> str | None:
-        file_path = os.path.join(self.get_file_cache_path(), f"{self.resource_id}.json")
+    @staticmethod
+    def get_data(resource_id: str) -> str | None:
+        file_path = os.path.join(CacheManager.get_file_cache_path(), f"{resource_id}.json")
 
         if not os.path.exists(file_path):
             return None
 
-        if self.is_file_cache_expired(file_path):
-            self.invalidate()
+        if CacheManager.is_file_cache_expired(file_path):
+            CacheManager.invalidate(resource_id)
             return None
 
         with open(file_path, "r") as f:
             return f.read()
 
-    def invalidate(self) -> None:
-        file_path = os.path.join(self.get_file_cache_path(), f"{self.resource_id}.json")
+    @staticmethod
+    def invalidate(resource_id: str) -> None:
+        file_path = os.path.join(CacheManager.get_file_cache_path(), f"{resource_id}.json")
 
         if not os.path.exists(file_path):
             return

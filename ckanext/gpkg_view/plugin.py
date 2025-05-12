@@ -1,9 +1,13 @@
+from typing import Any
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 import ckan.types as types
 from ckan.common import CKANConfig
 
 from ckanext.gpkg_view.cache import CacheManager
+
+
+RESOURCE_FORMATS = ["gpkg", "geopackage"]
 
 
 @tk.blanket.blueprints
@@ -13,6 +17,7 @@ class GpkgViewPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IResourceView, inherit=True)
     plugins.implements(plugins.IConfigurable)
+    plugins.implements(plugins.IResourceController, inherit=True)
 
     # IConfigurable
 
@@ -39,7 +44,7 @@ class GpkgViewPlugin(plugins.SingletonPlugin):
         }
 
     def can_view(self, data_dict: types.DataDict) -> bool:
-        return data_dict["resource"].get("format", "").lower() in ["gpkg", "geopackage"]
+        return data_dict["resource"].get("format", "").lower() in RESOURCE_FORMATS
 
     def view_template(self, context: types.Context, data_dict: types.DataDict) -> str:
         return "geopkg_view/geopkg_preview.html"
@@ -50,3 +55,19 @@ class GpkgViewPlugin(plugins.SingletonPlugin):
             package_id=data_dict["package"]["name"],
             resource_id=data_dict["resource"]["id"],
         )
+
+    # IResourceController
+
+    def before_resource_delete(
+        self,
+        context: types.Context,
+        resource: dict[str, Any],
+        resources: list[dict[str, Any]],
+    ) -> None:
+        CacheManager.invalidate(resource["id"])
+
+    def after_resource_update(
+        self, context: types.Context, resource: dict[str, Any]
+    ) -> None:
+        if resource.get("format", "").lower() in RESOURCE_FORMATS:
+            CacheManager.invalidate(resource["id"])

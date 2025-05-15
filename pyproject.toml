@@ -1,6 +1,6 @@
 [project]
 name = "ckanext-gpkg-view"
-version = "0.0.2"
+version = "0.0.3"
 description = "Preview for gpkg files"
 readme = "README.md"
 authors = [

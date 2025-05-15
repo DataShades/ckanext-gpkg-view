@@ -58,7 +58,6 @@ ckan.module('gpkg-view', function (jQuery, _) {
 
         showPreview: function (geojsonFeature) {
             // If geojsonFeature is empty or null, just ensure map is set to default view
-            debugger
             if (geojsonFeature == null) {
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
